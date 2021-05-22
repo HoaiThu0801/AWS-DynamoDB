@@ -10,6 +10,8 @@ router.put('/update-drink/:DrinkName', drinkcontroller.updateDrink)
 router.get('/update-drink/:DrinkName', drinkcontroller.searchDrinkName)
  ///[GET]/drinks/get-drink-type
 router.get('/get-drink-type', drinkcontroller.getTypeDrink)
+///[DELETE]/drinks/delete-drink
+router.delete('/delete-drink', drinkcontroller.deleteDrink)
 router.post('/add-drink', storage.single('Image') ,drinkcontroller.addDrink)
 router.get('/', drinkcontroller.getHome)
 module.exports = router;

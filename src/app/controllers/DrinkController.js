@@ -80,16 +80,64 @@ class DrinkController {
             }
         });
     }
-
+    ///[DELETE]/drinks/delete-drink
     deleteDrink (req, res, next){
-        const DrinkName = req.params.DrinkName;
+        const DrinkName = req.query.DrinkName;
         var docClient = new AWS.DynamoDB.DocumentClient()
-        var params = {
+        var paramsDelete = {
             TableName: "Drinks" ,
             Key:{
                 "DrinkName": DrinkName
             },
+            ConditionExpression:" DrinkName = :n",
+            ExpressionAttributeValues: {
+                ":n": DrinkName
+            }
         };
+        var paramsQuery = {
+            TableName: "Drinks" ,
+            Key:{
+                "DrinkName": DrinkName
+            },
+            KeyConditionExpression: "#DN = :DN",
+            ExpressionAttributeNames:{
+                "#DN": "DrinkName"
+            },
+            ExpressionAttributeValues: {
+                ":DN": DrinkName
+            }
+        };
+        docClient.query(paramsQuery, function(err, data) {
+            if (err) {
+                console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+                res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+            } else {
+                var result = data.Items
+                var paramsAdd = {
+                    TableName: "Drinks_BackUp" ,
+                    Item:{
+                        "DrinkName": data.Items[0].DrinkName,
+                        "Description": data.Items[0].Description,
+                        "Image":  data.Items[0].Image,
+                        "DrinkType": data.Items[0].DrinkType,
+                        "Price": data.Items[0].Price,
+                    }
+                };
+                docClient.put(paramsAdd, function(err, data) {
+                    if (err) {
+                        res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+                    } else {
+                        docClient.delete(paramsDelete, function(err, data) {
+                            if (err) {
+                                res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+                            } else {
+                                res.status(200).send({message : "Xóa món ăn thành công"})
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
     ///[GET]/drinks/get-drink-type
     async getTypeDrink (req, res, next){
