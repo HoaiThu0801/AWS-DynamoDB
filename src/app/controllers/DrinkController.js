@@ -49,13 +49,14 @@ class DrinkController {
         });
     }
     ///[PUT]/drinks/update-drink
-    updateDrink (req, res, next){
+    async updateDrink (req, res, next){
         const DrinkName = req.params.DrinkName;
         const Description = req.body.Description;
-        const Image = req.body.Image;
+        //const Image = req.body.Image;
         const DrinkType = req.body.DrinkType;
         const Price = req.body.Price;
-
+        const imageUrl =  await cloudinary.uploader.upload(req.file.path, {folder: 'Drinks'});
+        
         var docClient = new AWS.DynamoDB.DocumentClient()
         var params = {
             TableName: "Drinks" ,
@@ -65,7 +66,7 @@ class DrinkController {
             UpdateExpression: "set Description = :a, Image = :b, DrinkType = :c, Price = :d ",
             ExpressionAttributeValues:{
                 ":a": Description,
-                ":b" : Image,
+                ":b" : imageUrl.secure_url,
                 ":c" : DrinkType,
                 ":d" : Price,
             },
@@ -172,6 +173,65 @@ class DrinkController {
             } else {
                 var result = data.Items
                 return res.status(200).send(data.Items)
+            }
+        });
+    }
+    ///[DELETE]/drinks/restore-drink
+    restoreDrink (req, res, next){
+        const DrinkName = req.query.DrinkName;
+        var docClient = new AWS.DynamoDB.DocumentClient()
+        var paramsDelete = {
+            TableName: "Drinks_BackUp" ,
+            Key:{
+                "DrinkName": DrinkName
+            },
+            ConditionExpression:" DrinkName = :n",
+            ExpressionAttributeValues: {
+                ":n": DrinkName
+            }
+        };
+        var paramsQuery = {
+            TableName: "Drinks_BackUp" ,
+            Key:{
+                "DrinkName": DrinkName
+            },
+            KeyConditionExpression: "#DN = :DN",
+            ExpressionAttributeNames:{
+                "#DN": "DrinkName"
+            },
+            ExpressionAttributeValues: {
+                ":DN": DrinkName
+            }
+        };
+        docClient.query(paramsQuery, function(err, data) {
+            if (err) {
+                console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+                res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+            } else {
+                var result = data.Items
+                var paramsAdd = {
+                    TableName: "Drinks" ,
+                    Item:{
+                        "DrinkName": data.Items[0].DrinkName,
+                        "Description": data.Items[0].Description,
+                        "Image":  data.Items[0].Image,
+                        "DrinkType": data.Items[0].DrinkType,
+                        "Price": data.Items[0].Price,
+                    }
+                };
+                docClient.put(paramsAdd, function(err, data) {
+                    if (err) {
+                        res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+                    } else {
+                        docClient.delete(paramsDelete, function(err, data) {
+                            if (err) {
+                                res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+                            } else {
+                                res.status(200).send({message : "Phục hồi món ăn thành công"})
+                            }
+                        });
+                    }
+                });
             }
         });
     }
