@@ -235,6 +235,28 @@ class DrinkController {
             }
         });
     }
+    ///[DELETE]/drinks/delete-hard-drink
+    deleteHardDrink (req, res, next){
+        const DrinkName = req.query.DrinkName;
+        var docClient = new AWS.DynamoDB.DocumentClient()
+        var paramsDelete = {
+            TableName: "Drinks_BackUp" ,
+            Key:{
+                "DrinkName": DrinkName
+            },
+            ConditionExpression:" DrinkName = :n",
+            ExpressionAttributeValues: {
+                ":n": DrinkName
+            }
+        };
+        docClient.delete(paramsDelete, function(err, data) {
+            if (err) {
+                res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+            } else {
+                res.status(200).send({message : "Xóa món ăn vĩnh viễn"})
+            }
+        });
+    }
     ///[GET]/drinks/restore-drink
     async getDrinkRestore(req, res) {
         let docClient = new AWS.DynamoDB.DocumentClient();

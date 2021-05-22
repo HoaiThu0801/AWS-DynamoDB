@@ -16,6 +16,9 @@ router.delete('/delete-drink', drinkcontroller.deleteDrink)
 router.delete('/restore-drink', drinkcontroller.restoreDrink)
  ///[DELETE]/drinks/restore-drink
 router.get('/restore-drink', drinkcontroller.getDrinkRestore)
+ ///[DELETE]/drinks/delete-hard-drink
+router.delete('/delete-hard-drink', drinkcontroller.deleteHardDrink)
+
 router.post('/add-drink', storage.single('Image') ,drinkcontroller.addDrink)
 router.get('/', drinkcontroller.getHome)
 module.exports = router;
