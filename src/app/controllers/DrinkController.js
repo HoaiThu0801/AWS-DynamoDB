@@ -103,7 +103,7 @@ class DrinkController {
     }
     ///[GET]/drinks/search-drink-name
     searchDrinkName (req, res, next){
-        const DrinkName = req.query.DrinkName;
+        const DrinkName = req.params.DrinkName;
 
         var docClient = new AWS.DynamoDB.DocumentClient();
         var params = {
