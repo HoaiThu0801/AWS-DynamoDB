@@ -91,5 +91,41 @@ class DrinkController {
             },
         };
     }
+    ///[GET]/drinks/get-drink-type
+    async getTypeDrink (req, res, next){
+        let docClient = new AWS.DynamoDB.DocumentClient();
+        var params = {
+        TableName: "DrinkType",
+        };
+        var result = await docClient.scan(params).promise();
+        var data = result.Items
+        res.send(data);
+    }
+    ///[GET]/drinks/search-drink-name
+    searchDrinkName (req, res, next){
+        const DrinkName = req.query.DrinkName;
+
+        var docClient = new AWS.DynamoDB.DocumentClient();
+        var params = {
+            TableName : "Drinks",
+            KeyConditionExpression: "#DN = :DN",
+            ExpressionAttributeNames:{
+                "#DN": "DrinkName"
+            },
+            ExpressionAttributeValues: {
+                ":DN": DrinkName
+            }
+        };
+
+        docClient.query(params, function(err, data) {
+            if (err) {
+                console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+                res.status(400).send({message : "Unable to query. Error:" +  JSON.stringify(err, null, 2)})
+            } else {
+                var result = data.Items
+                return res.status(200).send(data.Items)
+            }
+        });
+    }
 }
 module.exports = new DrinkController();
