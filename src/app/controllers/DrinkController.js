@@ -235,5 +235,15 @@ class DrinkController {
             }
         });
     }
+    ///[GET]/drinks/restore-drink
+    async getDrinkRestore(req, res) {
+        let docClient = new AWS.DynamoDB.DocumentClient();
+        var params = {
+        TableName: "Drinks_BackUp",
+        };
+        var result = await docClient.scan(params).promise();
+        var data = result.Items
+        res.send(data);
+    }
 }
 module.exports = new DrinkController();
