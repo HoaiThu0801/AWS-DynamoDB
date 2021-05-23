@@ -5,10 +5,16 @@ const app = express();
 const port = process.env.PORT || 3000;
 const route = require('./routes')
 const bodyParser = require('body-parser')
+const cors = require('cors');
 const docClient = new AWS.DynamoDB.DocumentClient();
 require('dotenv').config();
 aws.connectAWS();
 app.set();
+const corsOptions ={
+    origin: '+', 
+    credentials: true,         
+    optionSuccessStatus: 200
+}
 // Add headers
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,6 +23,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
+app.use(cors(corsOptions));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
