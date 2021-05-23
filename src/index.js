@@ -26,7 +26,7 @@ app.set();
 }*/
 // Add headers
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*, https://coffee-aws.web.app');
+    res.setHeader('Access-Control-Allow-Origin', '* '); //https://coffee-aws.web.app
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
