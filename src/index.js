@@ -11,7 +11,7 @@ require('dotenv').config();
 aws.connectAWS();
 app.set();
 const corsOptions ={
-    origin: '+', 
+    origin: '*', 
     credentials: true,         
     optionSuccessStatus: 200
 }
