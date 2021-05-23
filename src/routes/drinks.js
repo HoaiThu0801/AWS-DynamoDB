@@ -1,5 +1,5 @@
 const express = require('express');
-const drinkcontroller = require('../app/controllers/drinkcontroller');
+const drinkcontroller = require('../app/controllers/DrinkController');
 const router = express.Router();
 const multer = require('multer');
 const storage = multer({dest:'public/'});
