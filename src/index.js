@@ -13,7 +13,16 @@ app.set();
 const corsOptions ={
     origin: 'https://coffee-aws.web.app', 
     credentials: true,         
-    optionSuccessStatus: 200
+    optionSuccessStatus: 200,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'Origin', 
+        'x-access-token', 
+        'XSRF-TOKEN'
+    ], 
+    preflightContinue: false 
 }
 // Add headers
 app.use(function (req, res, next) {
