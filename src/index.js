@@ -10,8 +10,8 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 require('dotenv').config();
 aws.connectAWS();
 app.set();
-const corsOptions ={
-    origin: 'https://coffee-aws.web.app', 
+/*const corsOptions ={
+    origin: '*, https://coffee-aws.web.app', 
     credentials: true,         
     optionSuccessStatus: 200,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -23,16 +23,16 @@ const corsOptions ={
         'XSRF-TOKEN'
     ], 
     preflightContinue: false 
-}
+}*/
 // Add headers
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'https://coffee-aws.web.app');
+    res.setHeader('Access-Control-Allow-Origin', '*, https://coffee-aws.web.app');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
