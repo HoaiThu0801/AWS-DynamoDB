@@ -52,10 +52,9 @@ class DrinkController {
     async updateDrink (req, res, next){
         const DrinkName = req.params.DrinkName;
         const Description = req.body.Description;
-        //const Image = req.body.Image;
+        const Image = req.body.Image;
         const DrinkType = req.body.DrinkType;
         const Price = req.body.Price;
-        const imageUrl =  await cloudinary.uploader.upload(req.file.path, {folder: 'Drinks'});
         
         var docClient = new AWS.DynamoDB.DocumentClient()
         var params = {
@@ -66,7 +65,7 @@ class DrinkController {
             UpdateExpression: "set Description = :a, Image = :b, DrinkType = :c, Price = :d ",
             ExpressionAttributeValues:{
                 ":a": Description,
-                ":b" : imageUrl.secure_url,
+                ":b" : Image,
                 ":c" : DrinkType,
                 ":d" : Price,
             },
